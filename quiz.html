@@ -1,0 +1,347 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<title>Quiz ITIL</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:40px;
+}
+
+.container{
+width:650px;
+margin:auto;
+background:#1e293b;
+padding:30px;
+border-radius:12px;
+}
+
+button{
+display:block;
+margin:10px auto;
+padding:12px;
+width:80%;
+border:none;
+border-radius:6px;
+background:#3b82f6;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+#result{
+font-size:26px;
+margin:20px;
+}
+
+#next{
+background:#10b981;
+display:none;
+}
+
+#progress{
+height:10px;
+background:#334155;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+#bar{
+height:10px;
+background:#22c55e;
+width:0%;
+border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Quiz ITIL</h1>
+
+<div id="startScreen">
+<h2>Testez vos connaissances sur ITIL</h2>
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quizScreen" style="display:none">
+
+<div id="progress">
+<div id="bar"></div>
+</div>
+
+<h2 id="question"></h2>
+
+<div id="answers"></div>
+
+<div id="result"></div>
+
+<button id="next" onclick="nextQuestion()">Question suivante</button>
+
+</div>
+
+</div>
+
+<script>
+
+const quiz=[
+
+{
+question:"Qu'est-ce que ITIL ?",
+answers:[
+"Un framework pour la gestion des services IT",
+"Un langage de programmation",
+"Un système d'exploitation",
+"Un logiciel antivirus"
+],
+correct:0
+},
+
+{
+question:"Que signifie ITSM ?",
+answers:[
+"IT Service Management",
+"Internet System Model",
+"Internal Server Machine",
+"Information System Method"
+],
+correct:0
+},
+
+{
+question:"Quel est l'objectif principal de ITIL ?",
+answers:[
+"Améliorer les services IT",
+"Supprimer les réseaux",
+"Créer des applications mobiles",
+"Remplacer les utilisateurs"
+],
+correct:0
+},
+
+{
+question:"Combien de phases dans le cycle ITIL ?",
+answers:["3","4","5","6"],
+correct:2
+},
+
+{
+question:"Quelle phase définit la stratégie IT ?",
+answers:[
+"Service Strategy",
+"Service Operation",
+"Service Design",
+"Service Support"
+],
+correct:0
+},
+
+{
+question:"Quelle phase conçoit les services ?",
+answers:[
+"Service Design",
+"Service Operation",
+"Service Desk",
+"Service Planning"
+],
+correct:0
+},
+
+{
+question:"Quelle phase déploie les services ?",
+answers:[
+"Service Transition",
+"Service Strategy",
+"Service Design",
+"Service Operation"
+],
+correct:0
+},
+
+{
+question:"Quelle phase gère les opérations quotidiennes ?",
+answers:[
+"Service Operation",
+"Service Strategy",
+"Service Design",
+"Service Improvement"
+],
+correct:0
+},
+
+{
+question:"Que signifie SLA ?",
+answers:[
+"Service Level Agreement",
+"Server Logic Access",
+"System Level Application",
+"Security Link Access"
+],
+correct:0
+},
+
+{
+question:"Quel processus gère les incidents ?",
+answers:[
+"Incident Management",
+"Access Control",
+"Server Control",
+"User Monitoring"
+],
+correct:0
+},
+
+{
+question:"Quel est le rôle du Service Desk ?",
+answers:[
+"Aider les utilisateurs",
+"Créer des virus",
+"Supprimer les réseaux",
+"Bloquer les accès"
+],
+correct:0
+},
+
+{
+question:"Que fait Continual Service Improvement ?",
+answers:[
+"Améliorer les services IT",
+"Supprimer les serveurs",
+"Créer des bugs",
+"Bloquer les utilisateurs"
+],
+correct:0
+},
+
+{
+question:"Dans l'exemple, quel était le problème ?",
+answers:[
+"Problème WiFi",
+"Problème serveur",
+"Virus",
+"Base de données"
+],
+correct:0
+},
+
+{
+question:"Quelle était la cause ?",
+answers:[
+"Access Point WiFi défectueux",
+"Câble coupé",
+"Routeur cassé",
+"Serveur arrêté"
+],
+correct:0
+},
+
+{
+question:"Que fait l'équipe IT à la fin ?",
+answers:[
+"Fermer le ticket",
+"Supprimer le réseau",
+"Éteindre les serveurs",
+"Créer un nouveau problème"
+],
+correct:0
+}
+
+];
+
+let current=0;
+let score=0;
+
+function startQuiz(){
+
+document.getElementById("startScreen").style.display="none";
+document.getElementById("quizScreen").style.display="block";
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+let q=quiz[current];
+
+document.getElementById("question").innerText=(current+1)+". "+q.question;
+
+let answersHTML="";
+
+q.answers.forEach((a,i)=>{
+answersHTML+=`<button onclick="checkAnswer(${i})">${a}</button>`;
+});
+
+document.getElementById("answers").innerHTML=answersHTML;
+document.getElementById("result").innerHTML="";
+document.getElementById("next").style.display="none";
+
+updateBar();
+
+}
+
+function checkAnswer(index){
+
+let correct=quiz[current].correct;
+
+if(index===correct){
+
+document.getElementById("result").innerHTML="✔️ Bonne réponse";
+score++;
+
+}else{
+
+document.getElementById("result").innerHTML="❌ Mauvaise réponse";
+
+}
+
+document.getElementById("next").style.display="block";
+
+}
+
+function nextQuestion(){
+
+current++;
+
+if(current<quiz.length){
+
+loadQuestion();
+
+}else{
+
+document.querySelector(".container").innerHTML=
+"<h2>Quiz terminé</h2><h3>Score: "+score+" / "+quiz.length+"</h3>";
+
+}
+
+}
+
+function updateBar(){
+
+let percent=(current/quiz.length)*100;
+
+document.getElementById("bar").style.width=percent+"%";
+
+}
+
+</script>
+
+</body>
+</html>
+```
